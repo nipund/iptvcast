@@ -1,15 +1,16 @@
 package me.dayanath.iptvcast;
 
-import android.graphics.drawable.Drawable;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.TableLayout;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
@@ -17,7 +18,11 @@ import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.InputStream;
+
+import me.dayanath.iptvcast.m3u.ChannelList;
+import me.dayanath.iptvcast.m3u.Parser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -96,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 Util.castHLS(mHandler, mCastSession.getRemoteMediaClient(), "http://ok2.se:8000/live/nipun/WUbc6QC9ou/198.m3u8");
             }
         });*/
-
-        Util.fillTable(this);
     }
 
     @Override
@@ -121,6 +124,38 @@ public class MainActivity extends AppCompatActivity {
                 menu,
                 R.id.media_route_menu_item);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.import_local:
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                startActivityForResult(intent, 42);
+                return true;
+            case R.id.import_remote:
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (requestCode == 42 && resultCode == Activity.RESULT_OK) {
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    ChannelList cl = Parser.parse(inputStream);
+                    Util.fillTable(this, cl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

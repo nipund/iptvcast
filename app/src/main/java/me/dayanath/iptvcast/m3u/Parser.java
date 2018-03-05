@@ -1,16 +1,20 @@
 package me.dayanath.iptvcast.m3u;
 
+import android.util.Log;
+
+import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Parser {
 
-    static String CHANNEL_REGEX = "#EXTINF:(.+),(.+)(?:\\R)(.+)$";
+    static String CHANNEL_REGEX = "EXTINF:(.+),(.+)(?:\\R)(.+)$";
 
-    public static ChannelList parse(String playlist) {
+    public static ChannelList parse(InputStream playlist) {
         ChannelList cl = new ChannelList();
         Scanner s = new Scanner(playlist).useDelimiter("#");
+        s.next();
         if(!s.next().equals("EXTM3U")) {
             throw new IllegalArgumentException();
         }
@@ -18,7 +22,7 @@ public class Parser {
             String line = s.next();
             Pattern pattern = Pattern.compile(CHANNEL_REGEX, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(line);
-            if(!matcher.matches()) {
+            if(!matcher.find()) {
                 throw new IllegalArgumentException();
             }
             ChannelItem item = new ChannelItem();

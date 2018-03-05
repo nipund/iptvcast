@@ -7,6 +7,10 @@
         android:title="Cast"
         app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
         app:showAsAction="always" />
-    <item android:title="Import local M3U" />
-    <item android:title="Import remote M3U" />
+    <item
+        android:id="@+id/import_local"
+        android:title="Import local M3U" />
+    <item
+        android:id="@+id/import_remote"
+        android:title="Import remote M3U" />
 </menu>
