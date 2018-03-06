@@ -1,9 +1,6 @@
 package me.dayanath.iptvcast;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,12 +10,7 @@ import android.widget.TextView;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 import me.dayanath.iptvcast.m3u.ChannelItem;
 import me.dayanath.iptvcast.m3u.ChannelList;
@@ -53,17 +45,5 @@ public class Util {
                 });
             }
         });
-    }
-
-    public static void fillTable(Activity activity, ChannelList cl) {
-        TableLayout table = (TableLayout) activity.findViewById(R.id.channelTable);
-
-        for(ChannelItem c : cl.items) {
-            View tr = activity.getLayoutInflater().inflate(R.layout.table_row, null);
-            TextView name = (TextView) tr.findViewById(R.id.channelName);
-            ImageView logo = (ImageView) tr.findViewById(R.id.channelLogo);
-            name.setText(c.name);
-            table.addView(tr);
-        }
     }
 }

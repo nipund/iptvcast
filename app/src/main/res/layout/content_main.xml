@@ -8,18 +8,10 @@
     tools:context="me.dayanath.iptvcast.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ScrollView
+    <ListView
+        android:id="@+id/channel_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TableLayout
-            android:id="@+id/channelTable"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:orientation="horizontal"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp">
-
-        </TableLayout>
-    </ScrollView>
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

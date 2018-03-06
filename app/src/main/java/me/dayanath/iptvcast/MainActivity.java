@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
             new SessionManagerListenerImpl();
     private Button button;
     public Handler mHandler;
+    private ListView list;
 
     private class SessionManagerListenerImpl implements SessionManagerListener<CastSession> {
         @Override
@@ -95,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        list = (ListView) findViewById(R.id.channel_list);
+
         /*button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(uri);
                     ChannelList cl = Parser.parse(inputStream);
-                    Util.fillTable(this, cl);
+                    ChannelListAdapter cla = new ChannelListAdapter(this, cl);
+                    list.setAdapter(cla);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
