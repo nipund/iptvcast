@@ -8,17 +8,25 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private Button button;
     public Handler mHandler;
     private ListView list;
+    private Kryo kryo;
+    private boolean alreadyCasting;
 
     private class SessionManagerListenerImpl implements SessionManagerListener<CastSession> {
         @Override
@@ -90,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        kryo = new Kryo();
         mHandler = new Handler(Looper.getMainLooper());
         mSessionManager = CastContext.getSharedInstance(this).getSessionManager();
         super.onCreate(savedInstanceState);
@@ -98,6 +109,23 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         list = (ListView) findViewById(R.id.channel_list);
+
+        try {
+            Input input = new Input(openFileInput("playlist.bin"));
+            ChannelList cl = kryo.readObject(input, ChannelList.class);
+            input.close();
+            ChannelListAdapter cla = new ChannelListAdapter(this, cl);
+            list.setAdapter(cla);
+        } catch (FileNotFoundException e) {
+            Log.d("kryo", "Channel list cache not found.");
+        }
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                list.getItemAtPosition(position);
+            }
+        });
 
         /*button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +184,9 @@ public class MainActivity extends AppCompatActivity {
                     ChannelList cl = Parser.parse(inputStream);
                     ChannelListAdapter cla = new ChannelListAdapter(this, cl);
                     list.setAdapter(cla);
+                    Output output = new Output(openFileOutput("playlist.bin", MODE_PRIVATE));
+                    kryo.writeObject(output, cl);
+                    output.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

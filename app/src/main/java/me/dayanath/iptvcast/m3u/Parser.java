@@ -35,6 +35,7 @@ public class Parser {
     }
 
     private static void parseMetadata(ChannelItem item, String metadata) {
+
     }
 
 }
