@@ -9,11 +9,22 @@
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
-        android:text="text" />
+        android:layout_gravity="center_vertical"
+        android:text="text"
+        android:layout_marginLeft="10dp"/>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="20dp" />
 
     <ImageView
         android:id="@+id/channelLogo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" />
 
 </LinearLayout>

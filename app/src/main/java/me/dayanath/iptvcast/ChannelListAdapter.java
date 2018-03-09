@@ -6,7 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -14,6 +17,7 @@ import me.dayanath.iptvcast.m3u.ChannelItem;
 import me.dayanath.iptvcast.m3u.ChannelList;
 
 public class ChannelListAdapter extends BaseAdapter {
+    private Picasso picasso;
     private LayoutInflater mInflater;
     private ChannelList mDataSource;
     private Context mContext;
@@ -22,6 +26,7 @@ public class ChannelListAdapter extends BaseAdapter {
         mContext = context;
         mDataSource = cl;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        picasso = Picasso.get();
     }
 
     @Override
@@ -45,8 +50,11 @@ public class ChannelListAdapter extends BaseAdapter {
         ChannelItem c = (ChannelItem) getItem(position);
 
         TextView name = (TextView) rowView.findViewById(R.id.channelName);
+        ImageView logo = (ImageView) rowView.findViewById(R.id.channelLogo);
 
         name.setText(c.name);
+        picasso.load(c.metadata.get("tvg-logo")).resize(0, 130).into(logo);
+
         return rowView;
     }
 }

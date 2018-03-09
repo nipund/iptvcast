@@ -32,4 +32,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

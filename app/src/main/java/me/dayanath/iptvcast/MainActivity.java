@@ -25,11 +25,11 @@ import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import me.dayanath.iptvcast.m3u.ChannelItem;
 import me.dayanath.iptvcast.m3u.ChannelList;
 import me.dayanath.iptvcast.m3u.Parser;
 
@@ -123,16 +123,10 @@ public class MainActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                list.getItemAtPosition(position);
+                ChannelItem ci = (ChannelItem) list.getAdapter().getItem(position);
+                Util.castHLS(mHandler, mCastSession.getRemoteMediaClient(), ci.url);
             }
         });
-
-        /*button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.castHLS(mHandler, mCastSession.getRemoteMediaClient(), "http://ok2.se:8000/live/nipun/WUbc6QC9ou/198.m3u8");
-            }
-        });*/
     }
 
     @Override

@@ -1,7 +1,13 @@
 package me.dayanath.iptvcast.m3u;
 
+import java.util.HashMap;
+
 public class ChannelItem {
     public int duration;
-    public TvgLogo tvg_logo;
-    public String tvg_ID, tvg_name, group_title, name, url;
+    public String name, url;
+    public HashMap<String, String> metadata;
+
+    public ChannelItem() {
+        metadata = new HashMap<String, String>();
+    }
 }

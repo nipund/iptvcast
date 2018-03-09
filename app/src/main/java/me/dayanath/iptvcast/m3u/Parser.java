@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 public class Parser {
 
     static String CHANNEL_REGEX = "EXTINF:(.+),(.+)(?:\\R)(.+)$";
+    static String METADATA_REGEX = "(\\S+?)=\"(.+?)\"";
 
     public static ChannelList parse(InputStream playlist) {
         ChannelList cl = new ChannelList();
@@ -35,7 +36,12 @@ public class Parser {
     }
 
     private static void parseMetadata(ChannelItem item, String metadata) {
+        Pattern pattern = Pattern.compile(METADATA_REGEX);
+        Matcher matcher = pattern.matcher(metadata);
 
+        while (matcher.find()) {
+            item.metadata.put(matcher.group(1), matcher.group(2));
+        }
     }
 
 }
