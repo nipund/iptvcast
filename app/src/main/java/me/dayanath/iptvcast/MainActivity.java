@@ -8,12 +8,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Filterable;
 import android.widget.ListView;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -42,8 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private Button button;
     public Handler mHandler;
     private ListView list;
+    private EditText search;
     private Kryo kryo;
     private boolean alreadyCasting;
+    private ChannelListAdapter cla;
 
     private class SessionManagerListenerImpl implements SessionManagerListener<CastSession> {
         @Override
@@ -109,16 +115,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         list = (ListView) findViewById(R.id.channel_list);
+        search = (EditText) findViewById(R.id.search);
 
         try {
             Input input = new Input(openFileInput("playlist.bin"));
             ChannelList cl = kryo.readObject(input, ChannelList.class);
             input.close();
-            ChannelListAdapter cla = new ChannelListAdapter(this, cl);
+            cla = new ChannelListAdapter(this, cl);
             list.setAdapter(cla);
         } catch (FileNotFoundException e) {
             Log.d("kryo", "Channel list cache not found.");
-        }
+        } catch (Exception e) {}
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -126,6 +133,19 @@ public class MainActivity extends AppCompatActivity {
                 ChannelItem ci = (ChannelItem) list.getAdapter().getItem(position);
                 Util.castHLS(mHandler, mCastSession.getRemoteMediaClient(), ci.url);
             }
+        });
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //cla.getFilter().filter(s);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
     }
 

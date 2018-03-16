@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class ChannelList {
     public String name;
     public ArrayList<ChannelItem> items;
+    public ArrayList<String> groups;
 
     public ChannelList() {
         items = new ArrayList<ChannelItem>();
