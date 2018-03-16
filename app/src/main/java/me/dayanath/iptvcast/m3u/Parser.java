@@ -11,8 +11,11 @@ public class Parser {
 
     static String CHANNEL_REGEX = "EXTINF:(.+),(.+)(?:\\R)(.+)$";
     static String METADATA_REGEX = "(\\S+?)=\"(.+?)\"";
+    private static Pattern metadata_pattern, channel_pattern;
 
     public static ChannelList parse(InputStream playlist) {
+        metadata_pattern = Pattern.compile(METADATA_REGEX);
+        channel_pattern = Pattern.compile(CHANNEL_REGEX, Pattern.MULTILINE);
         ChannelList cl = new ChannelList();
         Scanner s = new Scanner(playlist).useDelimiter("#");
         s.next();
@@ -21,8 +24,7 @@ public class Parser {
         }
         while(s.hasNext()) {
             String line = s.next();
-            Pattern pattern = Pattern.compile(CHANNEL_REGEX, Pattern.MULTILINE);
-            Matcher matcher = pattern.matcher(line);
+            Matcher matcher = channel_pattern.matcher(line);
             if(!matcher.find()) {
                 throw new IllegalArgumentException();
             }
@@ -36,8 +38,7 @@ public class Parser {
     }
 
     private static void parseMetadata(ChannelItem item, String metadata) {
-        Pattern pattern = Pattern.compile(METADATA_REGEX);
-        Matcher matcher = pattern.matcher(metadata);
+        Matcher matcher = metadata_pattern.matcher(metadata);
 
         while (matcher.find()) {
             item.metadata.put(matcher.group(1), matcher.group(2));
