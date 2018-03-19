@@ -1,7 +1,5 @@
 package me.dayanath.iptvcast.m3u;
 
-import android.util.Log;
-
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;

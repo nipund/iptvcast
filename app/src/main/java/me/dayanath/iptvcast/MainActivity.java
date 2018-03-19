@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //cla.getFilter().filter(s);
+                cla.getFilter().filter(s);
             }
 
             @Override

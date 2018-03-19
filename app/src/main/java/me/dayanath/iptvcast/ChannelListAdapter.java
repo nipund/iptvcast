@@ -13,30 +13,34 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import me.dayanath.iptvcast.m3u.ChannelItem;
 import me.dayanath.iptvcast.m3u.ChannelList;
 
 public class ChannelListAdapter extends BaseAdapter implements Filterable {
     private Picasso picasso;
     private LayoutInflater mInflater;
-    private ChannelList mDataSource;
+    ArrayList<ChannelItem> originalChannelList, filteredChannelList;
     private Context mContext;
+    private ChannelFilter filter = new ChannelFilter();
 
     public ChannelListAdapter(@NonNull Context context, ChannelList cl) {
         mContext = context;
-        mDataSource = cl;
+        originalChannelList = cl.items;
+        filteredChannelList = cl.items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         picasso = Picasso.get();
     }
 
     @Override
     public int getCount() {
-        return mDataSource.items.size();
+        return filteredChannelList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mDataSource.items.get(position);
+        return filteredChannelList.get(position);
     }
 
     @Override
@@ -60,6 +64,28 @@ public class ChannelListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public Filter getFilter() {
-        return null;
+        return filter;
+    }
+
+    class ChannelFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            filteredChannelList = new ArrayList<ChannelItem>();
+            for(ChannelItem ci : originalChannelList) {
+                if(ci.name.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                    filteredChannelList.add(ci);
+                }
+            }
+            results.count = filteredChannelList.size();
+            results.values = filteredChannelList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            notifyDataSetChanged();
+        }
     }
 }
