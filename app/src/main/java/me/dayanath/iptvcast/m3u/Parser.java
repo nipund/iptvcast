@@ -1,5 +1,7 @@
 package me.dayanath.iptvcast.m3u;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -16,7 +18,6 @@ public class Parser {
         channel_pattern = Pattern.compile(CHANNEL_REGEX, Pattern.MULTILINE);
         ChannelList cl = new ChannelList();
         Scanner s = new Scanner(playlist).useDelimiter("#");
-        s.next();
         if(!s.next().equals("EXTM3U")) {
             throw new IllegalArgumentException();
         }

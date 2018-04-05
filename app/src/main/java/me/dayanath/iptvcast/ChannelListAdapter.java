@@ -73,8 +73,10 @@ public class ChannelListAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             filteredChannelList = new ArrayList<ChannelItem>();
+            String searchString = constraint.toString().toLowerCase();
+
             for(ChannelItem ci : originalChannelList) {
-                if(ci.name.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                if(ci.name.toLowerCase().contains(searchString)) {
                     filteredChannelList.add(ci);
                 }
             }

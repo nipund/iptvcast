@@ -21,7 +21,7 @@ Feel free to fork and contribute. More info on the workflow [here](https://gist.
 
 ## Authors
 
-* **Nipun Dayanath** - *Initial work* - [nipund](https://github.com/nipund)
+* **Nipun Dayanath** - [nipund](https://github.com/nipund)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 

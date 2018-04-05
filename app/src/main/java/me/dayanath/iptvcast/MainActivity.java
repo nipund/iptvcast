@@ -1,6 +1,8 @@
 package me.dayanath.iptvcast;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filterable;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -36,6 +39,11 @@ import java.io.InputStream;
 import me.dayanath.iptvcast.m3u.ChannelItem;
 import me.dayanath.iptvcast.m3u.ChannelList;
 import me.dayanath.iptvcast.m3u.Parser;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -182,6 +190,67 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 42);
                 return true;
             case R.id.import_remote:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Remote M3U");
+                final EditText input = new EditText(this);
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        OkHttpClient client = new OkHttpClient();
+                        String url = input.getText().toString();
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .build();
+                        client.newCall(request).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, final IOException e) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this, "Error fetching URL - " + e.getMessage(),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                try {
+                                    final ChannelList cl = Parser.parse(response.body().byteStream());
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            cla = new ChannelListAdapter(MainActivity.this, cl);
+                                            list.setAdapter(cla);
+                                            try {
+                                                Output output = new Output(openFileOutput("playlist.bin", MODE_PRIVATE));
+                                                kryo.writeObject(output, cl);
+                                                output.close();
+                                            } catch (FileNotFoundException e) {}
+                                        }
+                                    });
+                                } catch (final IllegalArgumentException e) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(MainActivity.this, "Error parsing M3U",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+
+                            }
+                        });
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
                 return true;
         }
         return false;
@@ -196,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(uri);
                     ChannelList cl = Parser.parse(inputStream);
-                    ChannelListAdapter cla = new ChannelListAdapter(this, cl);
+                    cla = new ChannelListAdapter(this, cl);
                     list.setAdapter(cla);
                     Output output = new Output(openFileOutput("playlist.bin", MODE_PRIVATE));
                     kryo.writeObject(output, cl);
